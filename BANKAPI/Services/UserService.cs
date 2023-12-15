@@ -12,6 +12,16 @@ namespace BANKAPI.Services
         public UserService(BankContext bankContext)
         {
             _bankContext = bankContext;
+
+            //Default User
+            User user = new User();
+            user.Id = Guid.NewGuid();
+            user.Nome = "admin";
+            user.Email = "admin@gmail.com";
+            user.Senha = "admin";
+
+            _bankContext.Users.Add(user);
+            _bankContext.SaveChanges();
         }
 
         public void Create(UserViewModel data)

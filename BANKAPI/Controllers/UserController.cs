@@ -1,12 +1,14 @@
 ﻿using BANKAPI.Data.Model;
 using BANKAPI.Data.ViewModel;
 using BANKAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BANKAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -24,8 +26,8 @@ namespace BANKAPI.Controllers
         }
 
         [HttpGet]
-        [Route("GetById")]
-        public async Task<IActionResult> GetById(Guid id)
+        [Route("GetById/{id}")]
+        public async Task<IActionResult> GetById([FromQuery] Guid id)
         {
             return Ok(await _userService.GetById(id));
         }
@@ -41,7 +43,7 @@ namespace BANKAPI.Controllers
 
         [HttpPut]
         [Route("Update")]
-        public async Task<IActionResult> Update(User data)
+        public async Task<IActionResult> Update([FromBody] User data)
         {
             _userService.Update(data);
 
@@ -49,8 +51,8 @@ namespace BANKAPI.Controllers
         }
 
         [HttpDelete]
-        [Route("Delete")]
-        public async Task<IActionResult> Delete(Guid id)
+        [Route("Delete/{id}")]
+        public async Task<IActionResult> Delete([FromQuery] Guid id)
         {
             _userService.Delete(id);
 
