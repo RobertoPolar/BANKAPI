@@ -1,38 +1,70 @@
-﻿using BANKAPI.Data.Model;
+﻿using BANKAPI.Data;
+using BANKAPI.Data.Model;
 using BANKAPI.Data.ViewModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace BANKAPI.Services
 {
     public class UserService : IUserService
     {
-        public void Create(UserViewModel email)
+        private readonly BankContext _bankContext;
+
+        public UserService(BankContext bankContext)
         {
-            throw new NotImplementedException();
+            _bankContext = bankContext;
+        }
+
+        public void Create(UserViewModel data)
+        {
+            User user = new User();
+            user.Id = Guid.NewGuid();
+            user.Nome = data.Nome;
+            user.Email = data.Email;
+            user.Senha = data.Senha;
+
+            _bankContext.Users.Add(user);
+            _bankContext.SaveChanges();
         }
 
         public void Delete(Guid id)
         {
-            throw new NotImplementedException();
+            var user = _bankContext.Users.Find(id);
+
+            if (user != null)
+            {
+                _bankContext.Users.Remove(user);
+                _bankContext.SaveChanges();
+            }
         }
 
-        public Task<IEnumerable<User>> GetAll()
+        public async Task<IEnumerable<User>> GetAll()
         {
-            throw new NotImplementedException();
+            return await _bankContext.Users.ToListAsync();
         }
 
-        public Task<User?> GetById(Guid id)
+        public async Task<User?> GetById(Guid id)
         {
-            throw new NotImplementedException();
+            return await _bankContext.Users.FindAsync(id);
         }
 
         public bool IsUser(string email, string senha)
         {
-            throw new NotImplementedException();
+            return _bankContext.Users.Any(x => x.Email == email && x.Senha == senha);
         }
 
-        public void Update(User username)
+        public void Update(User data)
         {
-            throw new NotImplementedException();
+            var user = _bankContext.Users.Find(data.Id);
+
+            if (user != null)
+            {
+                user.Nome = data.Nome;
+                user.Email = data.Email;
+                user.Senha = data.Senha;
+
+                _bankContext.Users.Update(user);
+                _bankContext.SaveChanges();
+            }
         }
     }
 }
